@@ -1,0 +1,28 @@
+:host {
+  width: 90%;
+  margin-top: 5vh;
+}
+article {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  background-color: lightcoral;
+  padding: 1em 2em;
+  margin-bottom: 1em;
+
+  border-radius: 30px;
+  .name {
+    flex: 1 1 70%;
+  }
+  .price,
+  .add {
+    flex: 0 0 15%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .panel {
+    flex: 1 0 100%;
+  }
+}

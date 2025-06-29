@@ -1,0 +1,14 @@
+<div class="panel" [formGroup]="panelForm()">
+  @for (option of options(); track option.name) {
+    <div class="panel-option">
+      <label [for]="option.name">{{ option.name | titlecase }}:</label>
+
+      <input
+        type="number"
+        [id]="option.name"
+        [formControlName]="option.name"
+        min="1"
+      />
+    </div>
+  }
+</div>

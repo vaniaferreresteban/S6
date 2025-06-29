@@ -1,0 +1,20 @@
+:host {
+  flex: 0 0 100%;
+  div {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    justify-content: flex-end;
+    flex: 0 1 100%;
+    margin-bottom: 0.5em;
+    input {
+      width: 4em;
+      border-radius: 5px;
+      border: none;
+    }
+    label,
+    input {
+      padding: 0.3em;
+    }
+  }
+}
