@@ -63,7 +63,6 @@ export class BudgetListComponent {
           }
         }
       }
-
       return acc + budgetPrice;
     }, 0);
   });
