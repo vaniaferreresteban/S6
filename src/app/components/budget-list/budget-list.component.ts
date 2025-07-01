@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
@@ -12,6 +12,8 @@ import { startWith } from 'rxjs';
 import { Budget } from '../../interfaces/budget';
 import { PanelComponent } from '../panel/panel.component';
 
+import { BudgetService } from '../../services/budget.service';
+
 @Component({
   selector: 'app-budget-list',
   standalone: true,
@@ -19,8 +21,10 @@ import { PanelComponent } from '../panel/panel.component';
   templateUrl: './budget-list.component.html',
   styleUrls: ['./budget-list.component.scss'],
 })
-export class BudgetListComponent {
-  public budgets = input.required<Budget[]>();
+export class BudgetListComponent implements OnInit{
+  public budgets = signal<Budget[]>([]);
+  private budgetService = inject(BudgetService);
+  
   private formBuilder = inject(FormBuilder);
 
   public budgetsForm: FormGroup = this.formBuilder.group({
@@ -38,33 +42,9 @@ export class BudgetListComponent {
 
   public totalBudget = computed(() => {
     const formBudgets = this.formValueSignal()?.budgetsFormArray ?? [];
-    const originalBudgets = this.budgets();
+   return this.budgetService.getTotalBudget(formBudgets);
 
-    return formBudgets.reduce((acc: number, curr: Budget) => {
-      if (!curr.selected) {
-        return acc;
-      }
-      let budgetPrice = curr.price;
-
-      if (curr.options) {
-        const originalBudget = originalBudgets.find(
-          (b) => b.name === curr.name,
-        );
-        if (originalBudget && originalBudget.options) {
-          for (const optionKey in curr.options) {
-            const quantity = curr.options[optionKey]; 
-            const originalOption = originalBudget.options.find(
-              (opt) => opt.name === optionKey,
-            );
-
-            if (originalOption) {
-              budgetPrice += (Number(quantity)-1) * originalOption.price;
-            }
-          }
-        }
-      }
-      return acc + budgetPrice;
-    }, 0);
+    
   });
 
   constructor() {
@@ -95,5 +75,8 @@ export class BudgetListComponent {
   }
   public getAsFormGroup(control: AbstractControl | null): FormGroup {
     return control as FormGroup;
+  }
+  ngOnInit(): void {
+    this.budgets.set(this.budgetService.getBudgets());
   }
 }
