@@ -8,6 +8,7 @@ import {
   AbstractControl,
 } from '@angular/forms';
 import { startWith } from 'rxjs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { Budget } from '../../interfaces/budget';
 import { PanelComponent } from '../panel/panel.component';
@@ -17,14 +18,14 @@ import { BudgetService } from '../../services/budget.service';
 @Component({
   selector: 'app-budget-list',
   standalone: true,
-  imports: [ReactiveFormsModule, PanelComponent],
+  imports: [ReactiveFormsModule, PanelComponent, MatCheckboxModule],
   templateUrl: './budget-list.component.html',
   styleUrls: ['./budget-list.component.scss'],
 })
-export class BudgetListComponent implements OnInit{
+export class BudgetListComponent implements OnInit {
   public budgets = signal<Budget[]>([]);
   private budgetService = inject(BudgetService);
-  
+
   private formBuilder = inject(FormBuilder);
 
   public budgetsForm: FormGroup = this.formBuilder.group({
@@ -42,9 +43,9 @@ export class BudgetListComponent implements OnInit{
 
   public totalBudget = computed(() => {
     const formBudgets = this.formValueSignal()?.budgetsFormArray ?? [];
-   return this.budgetService.getTotalBudget(formBudgets);
+    return this.budgetService.getTotalBudget(formBudgets);
 
-    
+
   });
 
   constructor() {

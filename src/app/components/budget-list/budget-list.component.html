@@ -9,11 +9,7 @@
           </div>
           <div>{{ budget.value.price }} €</div>
           <div>
-            <input
-              type="checkbox"
-              [id]="'budget-' + i"
-              formControlName="selected"
-            />
+            <mat-checkbox [id]="'budget-' + i" formControlName="selected" />
             <p>Afegir</p>
           </div>
 

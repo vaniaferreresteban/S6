@@ -21,12 +21,18 @@ export class BudgetService {
       description: "Programació d'una pagina web completa",
       options: [
         {
-          name: 'pages',
+          name: 'Pàgines',
           price: 30,
+          info: `Afegeix les pàgines que tindrà el teu projecte.
+          
+          El cost de cada pàgina es de 30€`
         },
         {
-          name: 'languages',
+          name: 'Llengues',
           price: 30,
+          info: `Afegeix els llenguatges que tindrà el teu projecte.
+          
+          El cost de cada llengua es de 30€`
         },
       ],
     },
