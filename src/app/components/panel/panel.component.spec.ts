@@ -18,6 +18,7 @@ describe('PanelComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    console.log(component);
+    expect(component.options).toBeTruthy();
   });
 });
