@@ -1,0 +1,29 @@
+<div class="counter-container">
+  <button
+    type="button"
+    class="counter-button"
+    (click)="decrement()"
+    [disabled]="quantity() <= min() || isDisabled()"
+  >
+    -
+  </button>
+
+  <input
+    type="text"
+    class="counter-value"
+    inputmode="numeric"
+    [value]="quantity()"
+    (input)="onInputChange($event)"
+    (blur)="onTouched()"
+    [disabled]="isDisabled()"
+  />
+
+  <button
+    type="button"
+    class="counter-button"
+    (click)="increment()"
+    [disabled]="isDisabled()"
+  >
+    +
+  </button>
+</div>

@@ -1,0 +1,50 @@
+:host {
+  display: inline-block;
+}
+.counter-container {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.counter-button {
+  width: 16px;
+  height: 16px;
+  background-color: #f7f7f7;
+  border: none;
+  color: #333;
+  font-size: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 50%;
+  border: 1px solid lightgray;
+
+  &:hover {
+    background-color: #e9e9e9;
+  }
+
+  &:disabled {
+    background-color: #fafafa;
+    color: #c0c0c0;
+    cursor: not-allowed;
+  }
+}
+
+.counter-value {
+  width: 45px;
+  height: 25px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  margin: 0 5px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    background-color: #ffffff;
+  }
+}
