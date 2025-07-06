@@ -6,36 +6,50 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   standalone: true,
   templateUrl: './num-input.component.html',
   styleUrl: './num-input.component.scss',
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => NumInputComponent),
-    multi: true
-  }]
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => NumInputComponent),
+      multi: true,
+    },
+  ],
 })
 export class NumInputComponent implements ControlValueAccessor {
   min = input(1);
   quantity = signal(1);
   isDisabled = signal(false);
 
-  onChange!: (v: number) => void;
-  onTouched!: () => void;
+  onChange: (v: number) => void = () => {
+    //placeholder
+  };
+  onTouched: () => void = () => {
+    //placeholder
+  };
 
-  writeValue(value: number): void { this.quantity.set(value || this.min()); }
+  writeValue(value: number): void {
+    this.quantity.set(value || this.min());
+  }
 
-  registerOnChange(fn: (v: number) => void): void { this.onChange = fn; }
+  registerOnChange(fn: (v: number) => void): void {
+    this.onChange = fn;
+  }
 
-  registerOnTouched(fn: () => void): void { this.onTouched = fn; }
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
 
-  setDisabledState(isDisabled: boolean): void { this.isDisabled.set(isDisabled); }
+  setDisabledState(isDisabled: boolean): void {
+    this.isDisabled.set(isDisabled);
+  }
 
   increment() {
-    this.quantity.update(q => q + 1);
+    this.quantity.update((q) => q + 1);
     this.onChange(this.quantity());
     this.onTouched();
   }
   decrement() {
     if (this.quantity() > this.min()) {
-      this.quantity.update(q => q - 1);
+      this.quantity.update((q) => q - 1);
       this.onChange(this.quantity());
       this.onTouched();
     }
