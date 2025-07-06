@@ -1,2 +1,52 @@
-<app-welcome></app-welcome>
+@if (budgetsFormArray) {
+  <form [formGroup]="budgetsForm">
+    <section formArrayName="budgetsFormArray">
+      @for (budget of budgetsFormArray.controls; track $index; let i = $index) {
+        <article [formGroupName]="i">
+          <div>
+            <h2>{{ budget.value.name }}</h2>
+            <p>{{ budget.value.description }}</p>
+          </div>
+          <div>{{ budget.value.price }} €</div>
+          <div>
+            <mat-checkbox [id]="'budget-' + i" formControlName="selected" />
+            <p>Afegir</p>
+          </div>
+
+          @if (budget.get("options") && budget.value.selected) {
+            <app-panel
+              [panelForm]="getAsFormGroup(budget.get('options'))"
+              [options]="budgets()[i].options ?? []"
+            ></app-panel>
+          }
+        </article>
+      }
+    </section>
+  </form>
+}
+
+<div>
+  <strong>Total: {{ totalBudget() }} €</strong>
+</div>
+<form class="create-client"[formGroup]="clientForm" (ngSubmit)="createClient()">
+  <div>
+    <label for="name">Nom: </label>
+    <input id="name" formControlName="name" type="text" />
+  </div>
+
+  <div>
+    <label for="telephone">Telèfon: </label>
+    <input id="telephone" formControlName="telephone" type="tel" />
+  </div>
+
+  <div>
+    <label for="email">Email: </label>
+    <input id="email" formControlName="email" type="email" />
+  </div>
+
+  <button type="submit" [disabled]="!clientForm.valid">
+    Sol·licitar Pressupost
+  </button>
+</form>
+
 <app-budget-list></app-budget-list>

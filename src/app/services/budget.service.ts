@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Budget } from '../interfaces/budget';
+import { Client } from '../interfaces/client';
 @Injectable({
   providedIn: 'root',
 })
@@ -25,18 +26,23 @@ export class BudgetService {
           price: 30,
           info: `Afegeix les pàgines que tindrà el teu projecte.
           
-          El cost de cada pàgina es de 30€`
+          El cost de cada pàgina es de 30€`,
         },
         {
           name: 'Llengues',
           price: 30,
           info: `Afegeix els llenguatges que tindrà el teu projecte.
           
-          El cost de cada llengua es de 30€`
+          El cost de cada llengua es de 30€`,
         },
       ],
     },
   ];
+  private clientBudgets: Client[] = [];
+  updateClientBudgets(client: Client): void {
+    this.clientBudgets.push(client);
+    console.log(this.clientBudgets);
+  }
   getBudgets(): Budget[] {
     return this._budgets;
   }
