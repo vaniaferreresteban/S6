@@ -28,7 +28,7 @@
 <div>
   <strong>Total: {{ totalBudget() }} €</strong>
 </div>
-<form class="create-client"[formGroup]="clientForm" (ngSubmit)="createClient()">
+<form class="createClient" [formGroup]="clientForm" (ngSubmit)="createClient()">
   <div>
     <label for="name">Nom: </label>
     <input id="name" formControlName="name" type="text" />

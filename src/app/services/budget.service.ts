@@ -41,7 +41,9 @@ export class BudgetService {
   private clientBudgets: Client[] = [];
   updateClientBudgets(client: Client): void {
     this.clientBudgets.push(client);
-    console.log(this.clientBudgets);
+  }
+  getClientBudgets(): Client[] {
+    return this.clientBudgets;
   }
   getBudgets(): Budget[] {
     return this._budgets;

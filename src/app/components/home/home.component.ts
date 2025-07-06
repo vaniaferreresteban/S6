@@ -49,13 +49,25 @@ export class HomeComponent implements OnInit {
     telephone: [''],
     email: [''],
     budgets: [''],
-    clientBudget: [''],
+    totalPrice: [''],
+    clientBudgets: [''],
   });
   public createClient() {
     if (this.clientForm.valid) {
-      this.clientForm.value.budgets = this.formValueSignal().budgetsFormArray;
-      this.clientForm.value.clientBudget = this.budgetService.getTotalBudget(this.formValueSignal().budgetsFormArray);
-      this.budgetService.updateClientBudgets(this.clientForm.value);
+      const clientData = JSON.parse(JSON.stringify(this.clientForm.value));
+      const allBudgets = JSON.parse(
+        JSON.stringify(this.formValueSignal().budgetsFormArray),
+      );
+
+      clientData.budgets = allBudgets.filter(
+        (budget: Budget) => budget.selected,
+      );
+
+      clientData.totalPrice = this.budgetService.getTotalBudget(allBudgets);
+
+      this.budgetService.updateClientBudgets(clientData);
+
+      console.log('Enviando datos independientes al servicio:', clientData);
     } else {
       console.log('El formulario no es válido');
     }

@@ -4,5 +4,6 @@ export interface Client {
   name: string;
   telephone: number;
   email: string;
-  budget: Budget[];
+  totalPrice:number;
+  budgets: Budget[];
 }
