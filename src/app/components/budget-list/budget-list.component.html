@@ -1,8 +1,9 @@
-@for (
-  clientBudget of budgetService.getClientBudgets();
-  let i = $index;
-  track i
-) {
+@if (budgetService.getClientBudgets().length>0) {
+  <button (click)="orderByDate()">Data</button>
+  <button (click)="orderByPrice()">Preu</button>
+  <button (click)="orderByAlphabet()">Alfabeticament</button>
+}
+@for (clientBudget of selectedOrder; let i = $index; track i) {
   <article>
     <div>
       <h2>
