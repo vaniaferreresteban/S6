@@ -1,21 +1,25 @@
 @if (budgetsFormArray) {
   <form [formGroup]="budgetsForm">
     <section formArrayName="budgetsFormArray">
-      @for (budget of budgetsFormArray.controls; track $index; let i = $index) {
+      @for (
+        budgetControl of budgetsFormArray.controls;
+        track $index;
+        let i = $index
+      ) {
         <article [formGroupName]="i">
           <div>
-            <h2>{{ budget.value.name }}</h2>
-            <p>{{ budget.value.description }}</p>
+            <h2>{{ budgets()[i].name }}</h2>
+            <p>{{ budgets()[i].description }}</p>
           </div>
-          <div>{{ budget.value.price }} €</div>
+          <div>{{ budgets()[i].price }} €</div>
           <div>
             <mat-checkbox [id]="'budget-' + i" formControlName="selected" />
             <p>Afegir</p>
           </div>
 
-          @if (budget.get("options") && budget.value.selected) {
+          @if (budgetControl.value.selected && budgets()[i].options) {
             <app-panel
-              [panelForm]="getAsFormGroup(budget.get('options'))"
+              [panelForm]="getAsFormGroup(budgetControl.get('options'))"
               [options]="budgets()[i].options ?? []"
             ></app-panel>
           }
@@ -28,7 +32,11 @@
 <div>
   <strong>Total: {{ totalBudget() }} €</strong>
 </div>
-<form class="createClient" [formGroup]="clientForm" (ngSubmit)="createClient()">
+<form
+  class="create-client"
+  [formGroup]="clientForm"
+  (ngSubmit)="createClient()"
+>
   <div>
     <label for="name">Nom: </label>
     <input id="name" formControlName="name" type="text" />

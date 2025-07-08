@@ -29,13 +29,13 @@ class MockNumInputComponent implements ControlValueAccessor {
   @Input() min = '';
   @Input() formControlName = '';
 
-  writeValue(_obj: any): void {
+  writeValue(_obj: number): void {
     //placeholder
   }
-  registerOnChange(_fn: any): void {
+  registerOnChange(_fn: number): void {
     //placeholder
   }
-  registerOnTouched(_fn: any): void {
+  registerOnTouched(_fn: number): void {
     //placeholder
   }
 }

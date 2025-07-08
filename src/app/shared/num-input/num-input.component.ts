@@ -27,7 +27,9 @@ export class NumInputComponent implements ControlValueAccessor {
   };
 
   writeValue(value: number): void {
-    this.quantity.set(value || this.min());
+    const newValue = value || this.min();
+    this.quantity.set(newValue);
+    this.onChange(newValue);
   }
 
   registerOnChange(fn: (v: number) => void): void {

@@ -39,15 +39,19 @@ export class BudgetService {
     },
   ];
   private clientBudgets: Client[] = [];
+
   updateClientBudgets(client: Client): void {
     this.clientBudgets.push(client);
   }
+
   getClientBudgets(): Client[] {
     return this.clientBudgets;
   }
+
   getBudgets(): Budget[] {
     return this._budgets;
   }
+  
   getTotalBudget(formBudgets: Budget[]): number {
     return formBudgets.reduce((acc: number, curr: Budget): number => {
       if (!curr.selected) {
@@ -55,24 +59,22 @@ export class BudgetService {
       }
       let budgetPrice = curr.price;
       if (curr.options) {
-        const originalBudget: Budget | undefined = this._budgets.find(
-          (b) => b.name === curr.name,
-        );
+        const originalBudget = this._budgets.find((b) => b.name === curr.name);
 
-        let optionMultiplier = 0;
-        console.log(optionMultiplier, originalBudget, curr);
-        let i = 0;
-        if (!originalBudget) {
-          return budgetPrice;
-        }
-        for (const optionKey in curr.options) {
-          optionMultiplier += Number(
-            originalBudget!.options![i].price * Number(curr.options[optionKey]),
-          );
+        if (originalBudget && originalBudget.options) {
+          let optionsTotal = 0;
+          for (const optionName in curr.options) {
+            const originalOption = originalBudget.options.find(
+              (opt) => opt.name === optionName
+            );
 
-          i++;
+            if (originalOption) {
+              const quantity = Number(curr.options[optionName as keyof typeof curr.options]);
+              optionsTotal += originalOption.price * quantity;
+            }
+          }
+          budgetPrice += optionsTotal;
         }
-        budgetPrice += optionMultiplier;
       }
       return acc + budgetPrice;
     }, 0);
