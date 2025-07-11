@@ -52,38 +52,6 @@ describe('PanelComponent Unit Test', () => {
   let component: PanelComponent;
   let fixture: ComponentFixture<PanelComponent>;
 
-  /*  {
-      name: 'SEO',
-      price: 300,
-      description: "Programació d'una pagina web completa",
-    },
-    {
-      name: 'ADS',
-      price: 400,
-      description: "Programació d'una pagina web completa",
-    },
-    {
-      name: 'WEB',
-      price: 500,
-      description: "Programació d'una pagina web completa",
-      options: [
-        {
-          name: 'Pàgines',
-          price: 30,
-          info: `Afegeix les pàgines que tindrà el teu projecte.
-          
-          El cost de cada pàgina es de 30€`,
-        },
-        {
-          name: 'Llengues',
-          price: 30,
-          info: `Afegeix els llenguatges que tindrà el teu projecte.
-          
-          El cost de cada llengua es de 30€`,
-        },
-      ],
-    },
-  ];*/
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PanelComponent],

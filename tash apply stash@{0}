@@ -1,0 +1,583 @@
+[1mdiff --git a/src/app/app.html b/src/app/app.html[m
+[1mindex d170b90..a5022a6 100644[m
+[1m--- a/src/app/app.html[m
+[1m+++ b/src/app/app.html[m
+[36m@@ -1,2 +1,2 @@[m
+[31m-<app-welcome></app-welcome>[m
+[31m-<app-home></app-home>[m
+[32m+[m[32m<header><app-welcome></app-welcome></header>[m
+[32m+[m[32m<main><app-home></app-home></main>[m
+[1mdiff --git a/src/app/app.routes.ts b/src/app/app.routes.ts[m
+[1mindex dc39edb..07e9ceb 100644[m
+[1m--- a/src/app/app.routes.ts[m
+[1m+++ b/src/app/app.routes.ts[m
+[36m@@ -1,3 +1,9 @@[m
+ import { Routes } from '@angular/router';[m
+[32m+[m[32mimport { HomeComponent } from './components/home/home.component';[m
+[32m+[m[32mimport { BudgetListComponent } from './components/budget-list/budget-list.component';[m
+ [m
+[31m-export const routes: Routes = [];[m
+[32m+[m[32mexport const routes: Routes = [[m
+[32m+[m[32m  { path: 'home', component: HomeComponent },[m
+[32m+[m[32m  { path: 'home/:form', component: BudgetListComponent, pathMatch: 'full' },[m
+[32m+[m[32m  { path: '**', component: HomeComponent },[m
+[32m+[m[32m];[m
+[1mdiff --git a/src/app/components/budget-list/budget-list.component.html b/src/app/components/budget-list/budget-list.component.html[m
+[1mindex d1ead48..ea7419e 100644[m
+[1m--- a/src/app/components/budget-list/budget-list.component.html[m
+[1m+++ b/src/app/components/budget-list/budget-list.component.html[m
+[36m@@ -1,9 +1,19 @@[m
+[31m-@if (budgetService.getClientBudgets().length>0) {[m
+[32m+[m[32m@if (budgetService.clientBudgets$().length > 0) {[m
+[32m+[m[32m  <input[m
+[32m+[m[32m    type="text"[m
+[32m+[m[32m    [(ngModel)]="searchTerm"[m
+[32m+[m[32m    placeholder="Busca per nom de client..."[m
+[32m+[m[32m  />[m
+   <button (click)="orderByDate()">Data</button>[m
+   <button (click)="orderByPrice()">Preu</button>[m
+   <button (click)="orderByAlphabet()">Alfabeticament</button>[m
+ }[m
+[31m-@for (clientBudget of selectedOrder; let i = $index; track i) {[m
+[32m+[m
+[32m+[m[32m@for ([m
+[32m+[m[32m  clientBudget of displayedBudgets();[m
+[32m+[m[32m  let i = $index;[m
+[32m+[m[32m  track clientBudget.name[m
+[32m+[m[32m) {[m
+   <article>[m
+     <div>[m
+       <h2>[m
+[36m@@ -27,6 +37,9 @@[m
+     </div>[m
+     <div>[m
+       <strong> Preu Total: {{ clientBudget.totalPrice }} € </strong>[m
+[32m+[m[32m      <button class="clickable" (click)="generateUrl(clientBudget)">[m
+[32m+[m[32m        🔗[m
+[32m+[m[32m      </button>[m
+     </div>[m
+   </article>[m
+ }[m
+[1mdiff --git a/src/app/components/budget-list/budget-list.component.scss b/src/app/components/budget-list/budget-list.component.scss[m
+[1mindex 79c3f1b..f5ee24c 100644[m
+[1m--- a/src/app/components/budget-list/budget-list.component.scss[m
+[1m+++ b/src/app/components/budget-list/budget-list.component.scss[m
+[36m@@ -8,7 +8,7 @@[m [marticle {[m
+   justify-content: space-evenly;[m
+   background-color: lightcoral;[m
+   padding: 1em 2em;[m
+[31m-  margin-bottom: 1em;[m
+[32m+[m[32m  margin: 1em 0;[m
+ [m
+   border-radius: 30px;[m
+   .name {[m
+[36m@@ -25,4 +25,14 @@[m [marticle {[m
+   .panel {[m
+     flex: 1 0 100%;[m
+   }[m
+[32m+[m[32m  .clickable {[m
+[32m+[m[32m    cursor: pointer;[m
+[32m+[m[32m    background-color: transparent;[m
+[32m+[m[32m    border: none;[m
+[32m+[m[32m    color: white;[m
+[32m+[m[32m    font-size: 20px;[m
+[32m+[m[32m    &:hover {[m
+[32m+[m[32m      text-shadow: 1px 1px 3px #000000cc;[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+ }[m
+[1mdiff --git a/src/app/components/budget-list/budget-list.component.ts b/src/app/components/budget-list/budget-list.component.ts[m
+[1mindex 86a195e..fffc4e4 100644[m
+[1m--- a/src/app/components/budget-list/budget-list.component.ts[m
+[1m+++ b/src/app/components/budget-list/budget-list.component.ts[m
+[36m@@ -1,5 +1,6 @@[m
+[31m-import { Component, inject } from '@angular/core';[m
+[32m+[m[32mimport { Component, inject, signal, computed } from '@angular/core';[m
+ import { KeyValuePipe } from '@angular/common';[m
+[32m+[m[32mimport { FormsModule } from '@angular/forms';[m
+ [m
+ import { BudgetService } from '../../services/budget.service';[m
+ import { Client } from '../../interfaces/client';[m
+[36m@@ -7,28 +8,64 @@[m [mimport { Client } from '../../interfaces/client';[m
+ @Component({[m
+   selector: 'app-budget-list',[m
+   standalone: true,[m
+[31m-  imports: [KeyValuePipe],[m
+[32m+[m[32m  imports: [KeyValuePipe, FormsModule],[m
+   templateUrl: './budget-list.component.html',[m
+   styleUrls: ['./budget-list.component.scss'],[m
+ })[m
+ export class BudgetListComponent {[m
+   public budgetService = inject(BudgetService);[m
+[31m-  public selectedOrder = this.budgetService.getClientBudgets();[m
+[31m-  budgetsCopy = [...this.budgetService.getClientBudgets()];[m
+ [m
+[31m-  public orderByAlphabet() {[m
+[32m+[m[32m  public searchTerm = signal<string>('');[m
+[32m+[m[32m  public sortOrder = signal<'date' | 'price' | 'alphabet'>('date');[m
+[32m+[m
+[32m+[m[32m  async generateUrl(clientBudget: Client): Promise<void> {[m
+[32m+[m[32m    const budgetsData = clientBudget.budgets;[m
+[32m+[m[32m    const jsonString = JSON.stringify(budgetsData);[m
+[32m+[m[32m    const encodedData = btoa(jsonString);[m
+[32m+[m
+[32m+[m[32m    const baseUrl = window.location.origin;[m
+[32m+[m[32m    const shareableUrl = `${baseUrl}/?data=${encodedData}`;[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      await navigator.clipboard.writeText(shareableUrl);[m
+[32m+[m[32m      alert('Enllaç copiat al porta-retalls! Ja el pots compartir.');[m
+[32m+[m[32m    } catch (err) {[m
+[32m+[m[32m      console.error("No s'ha pogut copiar l'enllaç: ", err);[m
+[32m+[m[32m      alert("Error en copiar l'enllaç. Ves-hi:" + shareableUrl);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  public displayedBudgets = computed(() => {[m
+[32m+[m[32m    const budgets = this.budgetService.clientBudgets$();[m
+[32m+[m[32m    const term = this.searchTerm().toLowerCase();[m
+[32m+[m[32m    const sortBy = this.sortOrder();[m
+[32m+[m
+[32m+[m[32m    const filtered = term[m
+[32m+[m[32m      ? budgets.filter((budget) => budget.name.toLowerCase().includes(term))[m
+[32m+[m[32m      : budgets;[m
+ [m
+[31m-    const budgetsCopy = [...this.budgetService.getClientBudgets()];[m
+[31m-    this.selectedOrder = budgetsCopy.sort((a: Client, b: Client) => a.name.localeCompare(b.name));[m
+[32m+[m[32m    const sorted = [...filtered];[m
+[32m+[m
+[32m+[m[32m    switch (sortBy) {[m
+[32m+[m[32m      case 'alphabet':[m
+[32m+[m[32m        sorted.sort((a: Client, b: Client) => a.name.localeCompare(b.name));[m
+[32m+[m[32m        break;[m
+[32m+[m[32m      case 'price':[m
+[32m+[m[32m        sorted.sort((a: Client, b: Client) => a.totalPrice - b.totalPrice);[m
+[32m+[m[32m        break;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    return sorted;[m
+[32m+[m[32m  });[m
+[32m+[m
+[32m+[m[32m  public orderByAlphabet() {[m
+[32m+[m[32m    this.sortOrder.set('alphabet');[m
+   }[m
+[32m+[m
+   public orderByPrice() {[m
+[31m-    const budgetsCopy = [...this.budgetService.getClientBudgets()];[m
+[31m-    this.selectedOrder = budgetsCopy.sort((a: Client, b: Client) => a.totalPrice - b.totalPrice);[m
+[32m+[m[32m    this.sortOrder.set('price');[m
+   }[m
+[32m+[m
+   public orderByDate() {[m
+[31m-    const budgetsCopy = [...this.budgetService.getClientBudgets()];[m
+[31m-    this.selectedOrder = budgetsCopy;[m
+[32m+[m[32m    this.sortOrder.set('date');[m
+   }[m
+[31m-[m
+[31m-[m
+ }[m
+[1mdiff --git a/src/app/components/home/home.component.html b/src/app/components/home/home.component.html[m
+[1mindex 092d6d4..9017596 100644[m
+[1m--- a/src/app/components/home/home.component.html[m
+[1m+++ b/src/app/components/home/home.component.html[m
+[36m@@ -39,17 +39,41 @@[m
+ >[m
+   <div>[m
+     <label for="name">Nom: </label>[m
+[31m-    <input id="name" formControlName="name" type="text" />[m
+[32m+[m[32m    <input id="name" aria-label="nom" formControlName="name" type="text" />[m
+[32m+[m[32m    <div>[m
+[32m+[m[32m      @if ([m
+[32m+[m[32m        clientForm.get("name")?.hasError("required") &&[m
+[32m+[m[32m        clientForm.get("name")?.touched[m
+[32m+[m[32m      ) {[m
+[32m+[m[32m        <small>El nom és obligatori.</small>[m
+[32m+[m[32m      }[m
+[32m+[m[32m    </div>[m
+   </div>[m
+ [m
+   <div>[m
+     <label for="telephone">Telèfon: </label>[m
+[31m-    <input id="telephone" formControlName="telephone" type="tel" />[m
+[32m+[m[32m    <input id="telephone" aria-label="numero movil" formControlName="telephone" type="tel" />[m
+[32m+[m[32m    <div>[m
+[32m+[m[32m      @if ([m
+[32m+[m[32m        clientForm.get("telephone")?.hasError("required") &&[m
+[32m+[m[32m        clientForm.get("name")?.touched[m
+[32m+[m[32m      ) {[m
+[32m+[m[32m        <small>El telefon és obligatori.</small>[m
+[32m+[m[32m      }[m
+[32m+[m[32m    </div>[m
+   </div>[m
+ [m
+   <div>[m
+     <label for="email">Email: </label>[m
+[31m-    <input id="email" formControlName="email" type="email" />[m
+[32m+[m[32m    <input id="email" aria-label="email" formControlName="email" type="email" />[m
+[32m+[m[32m    <div>[m
+[32m+[m[32m      @if ([m
+[32m+[m[32m        clientForm.get("email")?.hasError("required") &&[m
+[32m+[m[32m        clientForm.get("name")?.touched[m
+[32m+[m[32m      ) {[m
+[32m+[m[32m        <small>L'E-Mail és obligatori.</small>[m
+[32m+[m[32m      }[m
+[32m+[m[32m    </div>[m
+   </div>[m
+ [m
+   <button type="submit" [disabled]="!clientForm.valid">[m
+[1mdiff --git a/src/app/components/home/home.component.scss b/src/app/components/home/home.component.scss[m
+[1mindex 92303ef..4497e11 100644[m
+[1m--- a/src/app/components/home/home.component.scss[m
+[1m+++ b/src/app/components/home/home.component.scss[m
+[36m@@ -1,16 +1,45 @@[m
+ :host {[m
+   box-sizing: border-box;[m
+[31m-  padding: 10vh 10%;[m
+[32m+[m[32m  padding: 5vh 10%;[m
+   display: flex;[m
+   flex-flow: column nowrap;[m
+   justify-content: flex-start;[m
+   align-items: center;[m
+   width: 90%;[m
+[32m+[m[32m  margin: 0 auto;[m
+   height: 70vh;[m
+[32m+[m[32m  > div {[m
+[32m+[m[32m    margin-bottom: 1em;[m
+[32m+[m[32m  }[m
+ }[m
+[32m+[m
+ form {[m
+   width: 100%;[m
+ }[m
+[32m+[m[32m@media screen and (max-width: 900px) {[m
+[32m+[m[32m  form.create-client {[m
+[32m+[m[32m    display: flex;[m
+[32m+[m[32m    flex-flow: column nowrap;[m
+[32m+[m[32m    > div {[m
+[32m+[m[32m      display: flex;[m
+[32m+[m[32m      flex-flow: row nowrap;[m
+[32m+[m[32m      justify-content: space-between;[m
+[32m+[m[32m      margin: 0.5em 10%;[m
+[32m+[m[32m      label {[m
+[32m+[m[32m        flex: 0 0 30%;[m
+[32m+[m[32m      }[m
+[32m+[m[32m      input {[m
+[32m+[m[32m        flex: 0 0 70%;[m
+[32m+[m[32m        box-sizing: border-box;[m
+[32m+[m[32m      }[m
+[32m+[m[32m    }[m
+[32m+[m[32m    button {[m
+[32m+[m[32m      width: 150px;[m
+[32m+[m[32m      align-self: flex-end;[m
+[32m+[m[32m      margin-right: 10%;[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+ article {[m
+   display: flex;[m
+   flex-flow: row wrap;[m
+[1mdiff --git a/src/app/components/home/home.component.ts b/src/app/components/home/home.component.ts[m
+[1mindex 6f24d89..c5dc934 100644[m
+[1m--- a/src/app/components/home/home.component.ts[m
+[1m+++ b/src/app/components/home/home.component.ts[m
+[36m@@ -6,9 +6,13 @@[m [mimport {[m
+   FormBuilder,[m
+   FormGroup,[m
+   ReactiveFormsModule,[m
+[32m+[m[32m  Validators,[m
+ } from '@angular/forms';[m
+[31m-import { MatCheckboxModule } from '@angular/material/checkbox';[m
+[32m+[m
+ import { startWith } from 'rxjs';[m
+[32m+[m[32mimport { ActivatedRoute } from '@angular/router';[m
+[32m+[m
+[32m+[m[32mimport { MatCheckboxModule } from '@angular/material/checkbox';[m
+ [m
+ import { Budget } from '../../interfaces/budget';[m
+ import { PanelComponent } from '../panel/panel.component';[m
+[36m@@ -36,31 +40,40 @@[m [mexport class HomeComponent implements OnInit {[m
+   public budgets = signal<Budget[]>([]);[m
+   private budgetService = inject(BudgetService);[m
+   private formBuilder = inject(FormBuilder);[m
+[32m+[m[32m  private route = inject(ActivatedRoute);[m
+ [m
+   public budgetsForm: FormGroup = this.formBuilder.group({[m
+     budgetsFormArray: this.formBuilder.array([]),[m
+   });[m
+ [m
+   public clientForm: FormGroup = this.formBuilder.group({[m
+[31m-    name: [''],[m
+[31m-    telephone: [''],[m
+[31m-    email: [''],[m
+[32m+[m[32m    name: [[m
+[32m+[m[32m      '',[m
+[32m+[m[32m      [[m
+[32m+[m[32m        Validators.required,[m
+[32m+[m[32m        Validators.minLength(3),[m
+[32m+[m[32m        Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),[m
+[32m+[m[32m      ],[m
+[32m+[m[32m    ],[m
+[32m+[m
+[32m+[m[32m    telephone: ['', [Validators.required, Validators.pattern('^[0-9]{9}$')]],[m
+[32m+[m[32m    email: ['', [Validators.required, Validators.email]],[m
+   });[m
+ [m
+[31m-  private formValues = toSignal([m
+[31m-    this.budgetsForm.valueChanges.pipe(startWith(this.budgetsForm.value))[m
+[32m+[m[32m  private formValues$ = toSignal([m
+[32m+[m[32m    this.budgetsForm.valueChanges.pipe(startWith(this.budgetsForm.value)),[m
+   );[m
+ [m
+   public totalBudget = computed(() => {[m
+     const staticBudgets = this.budgets();[m
+[31m-    const formValues = this.formValues()?.budgetsFormArray ?? [];[m
+[32m+[m[32m    const formValues = this.formValues$()?.budgetsFormArray ?? [];[m
+     if (staticBudgets.length === 0 || formValues.length === 0) return 0;[m
+ [m
+     const combinedData = formValues.map([m
+       (formValue: BudgetFormValue, index: number) => ({[m
+         ...staticBudgets[index],[m
+         ...formValue,[m
+[31m-      })[m
+[32m+[m[32m      }),[m
+     );[m
+     return this.budgetService.getTotalBudget(combinedData);[m
+   });[m
+[36m@@ -69,8 +82,40 @@[m [mexport class HomeComponent implements OnInit {[m
+     const budgetsData = this.budgetService.getBudgets();[m
+     this.budgets.set(budgetsData);[m
+     this.buildBudgetsForm(budgetsData);[m
+[32m+[m[32m    this.route.queryParamMap.subscribe((params) => {[m
+[32m+[m[32m      const encodedData = params.get('data');[m
+[32m+[m
+[32m+[m[32m      if (encodedData) {[m
+[32m+[m[32m        try {[m
+[32m+[m[32m          const jsonString = atob(encodedData);[m
+[32m+[m[32m          const budgetsFromUrl = JSON.parse(jsonString) as Budget[];[m
+[32m+[m[32m          this.populateFormFromData(budgetsFromUrl);[m
+[32m+[m[32m        } catch (error) {[m
+[32m+[m[32m          console.error('Error en processar les dades de la URL:', error);[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    });[m
+   }[m
+[32m+[m[32m  private populateFormFromData(budgetsFromUrl: Budget[]): void {[m
+[32m+[m[32m    const formArray = this.budgetsForm.get('budgetsFormArray') as FormArray;[m
+ [m
+[32m+[m[32m    budgetsFromUrl.forEach((budgetUrl) => {[m
+[32m+[m[32m      const formGroup = formArray.controls.find((control) => {[m
+[32m+[m[32m        const budgetOriginal = this.budgets().find([m
+[32m+[m[32m          (b) => b.name === budgetUrl.name,[m
+[32m+[m[32m        );[m
+[32m+[m[32m        const index = this.budgets().indexOf(budgetOriginal!);[m
+[32m+[m[32m        return formArray.controls.indexOf(control) === index;[m
+[32m+[m[32m      }) as FormGroup;[m
+[32m+[m
+[32m+[m[32m      if (formGroup) {[m
+[32m+[m[32m        formGroup.patchValue({[m
+[32m+[m[32m          selected: budgetUrl.selected,[m
+[32m+[m[32m          options: budgetUrl.options,[m
+[32m+[m[32m        });[m
+[32m+[m[32m      }[m
+[32m+[m[32m    });[m
+[32m+[m[32m  }[m
+   buildBudgetsForm(budgets: Budget[]): void {[m
+     const formArray = this.budgetsForm.get('budgetsFormArray') as FormArray;[m
+     formArray.clear();[m
+[36m@@ -81,8 +126,8 @@[m [mexport class HomeComponent implements OnInit {[m
+ [m
+       if (budget.options) {[m
+         const panelGroup: Record<string, unknown> = {};[m
+[31m-        budget.options.forEach((opt) => {[m
+[31m-          panelGroup[opt.name] = [1];[m
+[32m+[m[32m        budget.options.forEach((option) => {[m
+[32m+[m[32m          panelGroup[option.name] = [1];[m
+         });[m
+         formControlsConfig['options'] = this.formBuilder.group(panelGroup);[m
+       }[m
+[36m@@ -93,23 +138,23 @@[m [mexport class HomeComponent implements OnInit {[m
+   public createClient() {[m
+     if (this.clientForm.invalid || this.totalBudget() === 0) {[m
+       alert([m
+[31m-        'Debes rellenar los datos del cliente y seleccionar al menos un servicio.'[m
+[32m+[m[32m        "Has d'omplir les dades de client i afegir un pressupost per a continuar.",[m
+       );[m
+       return;[m
+     }[m
+ [m
+     const clientData = JSON.parse(JSON.stringify(this.clientForm.value));[m
+     const staticBudgets = this.budgets();[m
+[31m-    const formValues = this.formValues()?.budgetsFormArray ?? [];[m
+[32m+[m[32m    const formValues = this.formValues$()?.budgetsFormArray ?? [];[m
+     const combinedData = formValues.map([m
+       (formValue: BudgetFormValue, index: number) => ({[m
+         ...staticBudgets[index],[m
+         ...formValue,[m
+[31m-      })[m
+[32m+[m[32m      }),[m
+     );[m
+     clientData.budgets = combinedData.filter((b: Budget) => b.selected);[m
+     clientData.totalPrice = this.totalBudget();[m
+[31m-    this.budgetService.updateClientBudgets(clientData);[m
+[32m+[m[32m    this.budgetService.addClientBudget(clientData);[m
+ [m
+     this.clientForm.reset();[m
+     this.budgetsForm.reset();[m
+[36m@@ -122,4 +167,4 @@[m [mexport class HomeComponent implements OnInit {[m
+   public getAsFormGroup(control: AbstractControl | null): FormGroup {[m
+     return control as FormGroup;[m
+   }[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/app/components/panel/panel.component.spec.ts b/src/app/components/panel/panel.component.spec.ts[m
+[1mindex 9cb6a9c..09ab13a 100644[m
+[1m--- a/src/app/components/panel/panel.component.spec.ts[m
+[1m+++ b/src/app/components/panel/panel.component.spec.ts[m
+[36m@@ -52,38 +52,6 @@[m [mdescribe('PanelComponent Unit Test', () => {[m
+   let component: PanelComponent;[m
+   let fixture: ComponentFixture<PanelComponent>;[m
+ [m
+[31m-  /*  {[m
+[31m-      name: 'SEO',[m
+[31m-      price: 300,[m
+[31m-      description: "Programació d'una pagina web completa",[m
+[31m-    },[m
+[31m-    {[m
+[31m-      name: 'ADS',[m
+[31m-      price: 400,[m
+[31m-      description: "Programació d'una pagina web completa",[m
+[31m-    },[m
+[31m-    {[m
+[31m-      name: 'WEB',[m
+[31m-      price: 500,[m
+[31m-      description: "Programació d'una pagina web completa",[m
+[31m-      options: [[m
+[31m-        {[m
+[31m-          name: 'Pàgines',[m
+[31m-          price: 30,[m
+[31m-          info: `Afegeix les pàgines que tindrà el teu projecte.[m
+[31m-          [m
+[31m-          El cost de cada pàgina es de 30€`,[m
+[31m-        },[m
+[31m-        {[m
+[31m-          name: 'Llengues',[m
+[31m-          price: 30,[m
+[31m-          info: `Afegeix els llenguatges que tindrà el teu projecte.[m
+[31m-          [m
+[31m-          El cost de cada llengua es de 30€`,[m
+[31m-        },[m
+[31m-      ],[m
+[31m-    },[m
+[31m-  ];*/[m
+   beforeEach(async () => {[m
+     await TestBed.configureTestingModule({[m
+       imports: [PanelComponent],[m
+[1mdiff --git a/src/app/services/budget.service.ts b/src/app/services/budget.service.ts[m
+[1mindex f8f5099..6aacf36 100644[m
+[1m--- a/src/app/services/budget.service.ts[m
+[1m+++ b/src/app/services/budget.service.ts[m
+[36m@@ -1,6 +1,9 @@[m
+[31m-import { Injectable } from '@angular/core';[m
+[32m+[m[32m// src/app/services/budget.service.ts[m
+[32m+[m
+[32m+[m[32mimport { Injectable, signal } from '@angular/core';[m
+ import { Budget } from '../interfaces/budget';[m
+ import { Client } from '../interfaces/client';[m
+[32m+[m
+ @Injectable({[m
+   providedIn: 'root',[m
+ })[m
+[36m@@ -38,20 +41,14 @@[m [mexport class BudgetService {[m
+       ],[m
+     },[m
+   ];[m
+[31m-  private clientBudgets: Client[] = [];[m
+ [m
+[31m-  updateClientBudgets(client: Client): void {[m
+[31m-    this.clientBudgets.push(client);[m
+[31m-  }[m
+[31m-[m
+[31m-  getClientBudgets(): Client[] {[m
+[31m-    return this.clientBudgets;[m
+[31m-  }[m
+[32m+[m[32m  private clientBudgetsState = signal<Client[]>([]);[m
+[32m+[m[32m  public clientBudgets$ = this.clientBudgetsState.asReadonly();[m
+ [m
+   getBudgets(): Budget[] {[m
+     return this._budgets;[m
+   }[m
+[31m-  [m
+[32m+[m
+   getTotalBudget(formBudgets: Budget[]): number {[m
+     return formBudgets.reduce((acc: number, curr: Budget): number => {[m
+       if (!curr.selected) {[m
+[36m@@ -65,11 +62,13 @@[m [mexport class BudgetService {[m
+           let optionsTotal = 0;[m
+           for (const optionName in curr.options) {[m
+             const originalOption = originalBudget.options.find([m
+[31m-              (opt) => opt.name === optionName[m
+[32m+[m[32m              (option) => option.name === optionName,[m
+             );[m
+ [m
+             if (originalOption) {[m
+[31m-              const quantity = Number(curr.options[optionName as keyof typeof curr.options]);[m
+[32m+[m[32m              const quantity = Number([m
+[32m+[m[32m                curr.options[optionName as keyof typeof curr.options],[m
+[32m+[m[32m              );[m
+               optionsTotal += originalOption.price * quantity;[m
+             }[m
+           }[m
+[36m@@ -79,4 +78,10 @@[m [mexport class BudgetService {[m
+       return acc + budgetPrice;[m
+     }, 0);[m
+   }[m
+[32m+[m[32m  addClientBudget(client: Client): void {[m
+[32m+[m[32m    this.clientBudgetsState.update((currentClients) => [[m
+[32m+[m[32m      ...currentClients,[m
+[32m+[m[32m      client,[m
+[32m+[m[32m    ]);[m
+[32m+[m[32m  }[m
+ }[m
+[1mdiff --git a/src/app/shared/welcome/welcome.component.scss b/src/app/shared/welcome/welcome.component.scss[m
+[1mindex 598b7b8..e64a35a 100644[m
+[1m--- a/src/app/shared/welcome/welcome.component.scss[m
+[1m+++ b/src/app/shared/welcome/welcome.component.scss[m
+[36m@@ -1,5 +1,7 @@[m
+ :host {[m
+[31m-  width: 100%;[m
+[32m+[m[32m  display: block;[m
+[32m+[m[32m  width: 90%;[m
+[32m+[m[32m  margin: 0 auto;[m
+ }[m
+ div {[m
+   margin: 10px 0;[m
+[1mdiff --git a/src/index.html b/src/index.html[m
+[1mindex bc2a0df..6b6b092 100644[m
+[1m--- a/src/index.html[m
+[1m+++ b/src/index.html[m
+[36m@@ -1,5 +1,5 @@[m
+ <!doctype html>[m
+[31m-<html lang="en">[m
+[32m+[m[32m<html lang="ca">[m
+   <head>[m
+     <meta charset="utf-8" />[m
+     <title>S6</title>[m
+[36m@@ -7,9 +7,15 @@[m
+     <meta name="author" content="Vania Ferrer" />[m
+     <meta name="viewport" content="width=device-width, initial-scale=1" />[m
+     <link rel="icon" type="image/x-icon" href="favicon.ico" />[m
+[31m-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">[m
+[31m-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">[m
+[31m-</head>[m
+[32m+[m[32m    <link[m
+[32m+[m[32m      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"[m
+[32m+[m[32m      rel="stylesheet"[m
+[32m+[m[32m    />[m
+[32m+[m[32m    <link[m
+[32m+[m[32m      href="https://fonts.googleapis.com/icon?family=Material+Icons"[m
+[32m+[m[32m      rel="stylesheet"[m
+[32m+[m[32m    />[m
+[32m+[m[32m  </head>[m
+   <body class="mat-typography">[m
+     <app-root></app-root>[m
+   </body>[m

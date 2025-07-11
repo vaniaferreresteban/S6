@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
+// src/app/services/budget.service.ts
+
+import { Injectable, signal } from '@angular/core';
 import { Budget } from '../interfaces/budget';
 import { Client } from '../interfaces/client';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -38,20 +41,14 @@ export class BudgetService {
       ],
     },
   ];
-  private clientBudgets: Client[] = [];
 
-  updateClientBudgets(client: Client): void {
-    this.clientBudgets.push(client);
-  }
-
-  getClientBudgets(): Client[] {
-    return this.clientBudgets;
-  }
+  private clientBudgetsState = signal<Client[]>([]);
+  public clientBudgets$ = this.clientBudgetsState.asReadonly();
 
   getBudgets(): Budget[] {
     return this._budgets;
   }
-  
+
   getTotalBudget(formBudgets: Budget[]): number {
     return formBudgets.reduce((acc: number, curr: Budget): number => {
       if (!curr.selected) {
@@ -65,11 +62,13 @@ export class BudgetService {
           let optionsTotal = 0;
           for (const optionName in curr.options) {
             const originalOption = originalBudget.options.find(
-              (opt) => opt.name === optionName
+              (option) => option.name === optionName,
             );
 
             if (originalOption) {
-              const quantity = Number(curr.options[optionName as keyof typeof curr.options]);
+              const quantity = Number(
+                curr.options[optionName as keyof typeof curr.options],
+              );
               optionsTotal += originalOption.price * quantity;
             }
           }
@@ -78,5 +77,11 @@ export class BudgetService {
       }
       return acc + budgetPrice;
     }, 0);
+  }
+  addClientBudget(client: Client): void {
+    this.clientBudgetsState.update((currentClients) => [
+      ...currentClients,
+      client,
+    ]);
   }
 }

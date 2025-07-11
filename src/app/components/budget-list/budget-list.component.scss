@@ -8,7 +8,7 @@ article {
   justify-content: space-evenly;
   background-color: lightcoral;
   padding: 1em 2em;
-  margin-bottom: 1em;
+  margin: 1em 0;
 
   border-radius: 30px;
   .name {
@@ -24,5 +24,15 @@ article {
   }
   .panel {
     flex: 1 0 100%;
+  }
+  .clickable {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    &:hover {
+      text-shadow: 1px 1px 3px #000000cc;
+    }
   }
 }

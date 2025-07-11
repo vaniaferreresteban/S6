@@ -6,9 +6,13 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+
 import { startWith } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { Budget } from '../../interfaces/budget';
 import { PanelComponent } from '../panel/panel.component';
@@ -36,31 +40,40 @@ export class HomeComponent implements OnInit {
   public budgets = signal<Budget[]>([]);
   private budgetService = inject(BudgetService);
   private formBuilder = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
 
   public budgetsForm: FormGroup = this.formBuilder.group({
     budgetsFormArray: this.formBuilder.array([]),
   });
 
   public clientForm: FormGroup = this.formBuilder.group({
-    name: [''],
-    telephone: [''],
-    email: [''],
+    name: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),
+      ],
+    ],
+
+    telephone: ['', [Validators.required, Validators.pattern('^[0-9]{9}$')]],
+    email: ['', [Validators.required, Validators.email]],
   });
 
-  private formValues = toSignal(
-    this.budgetsForm.valueChanges.pipe(startWith(this.budgetsForm.value))
+  private formValues$ = toSignal(
+    this.budgetsForm.valueChanges.pipe(startWith(this.budgetsForm.value)),
   );
 
   public totalBudget = computed(() => {
     const staticBudgets = this.budgets();
-    const formValues = this.formValues()?.budgetsFormArray ?? [];
+    const formValues = this.formValues$()?.budgetsFormArray ?? [];
     if (staticBudgets.length === 0 || formValues.length === 0) return 0;
 
     const combinedData = formValues.map(
       (formValue: BudgetFormValue, index: number) => ({
         ...staticBudgets[index],
         ...formValue,
-      })
+      }),
     );
     return this.budgetService.getTotalBudget(combinedData);
   });
@@ -69,8 +82,40 @@ export class HomeComponent implements OnInit {
     const budgetsData = this.budgetService.getBudgets();
     this.budgets.set(budgetsData);
     this.buildBudgetsForm(budgetsData);
-  }
+    this.route.queryParamMap.subscribe((params) => {
+      const encodedData = params.get('data');
 
+      if (encodedData) {
+        try {
+          const jsonString = atob(encodedData);
+          const budgetsFromUrl = JSON.parse(jsonString) as Budget[];
+          this.populateFormFromData(budgetsFromUrl);
+        } catch (error) {
+          console.error('Error en processar les dades de la URL:', error);
+        }
+      }
+    });
+  }
+  private populateFormFromData(budgetsFromUrl: Budget[]): void {
+    const formArray = this.budgetsForm.get('budgetsFormArray') as FormArray;
+
+    budgetsFromUrl.forEach((budgetUrl) => {
+      const formGroup = formArray.controls.find((control) => {
+        const budgetOriginal = this.budgets().find(
+          (b) => b.name === budgetUrl.name,
+        );
+        const index = this.budgets().indexOf(budgetOriginal!);
+        return formArray.controls.indexOf(control) === index;
+      }) as FormGroup;
+
+      if (formGroup) {
+        formGroup.patchValue({
+          selected: budgetUrl.selected,
+          options: budgetUrl.options,
+        });
+      }
+    });
+  }
   buildBudgetsForm(budgets: Budget[]): void {
     const formArray = this.budgetsForm.get('budgetsFormArray') as FormArray;
     formArray.clear();
@@ -81,8 +126,8 @@ export class HomeComponent implements OnInit {
 
       if (budget.options) {
         const panelGroup: Record<string, unknown> = {};
-        budget.options.forEach((opt) => {
-          panelGroup[opt.name] = [1];
+        budget.options.forEach((option) => {
+          panelGroup[option.name] = [1];
         });
         formControlsConfig['options'] = this.formBuilder.group(panelGroup);
       }
@@ -93,23 +138,23 @@ export class HomeComponent implements OnInit {
   public createClient() {
     if (this.clientForm.invalid || this.totalBudget() === 0) {
       alert(
-        'Debes rellenar los datos del cliente y seleccionar al menos un servicio.'
+        "Has d'omplir les dades de client i afegir un pressupost per a continuar.",
       );
       return;
     }
 
     const clientData = JSON.parse(JSON.stringify(this.clientForm.value));
     const staticBudgets = this.budgets();
-    const formValues = this.formValues()?.budgetsFormArray ?? [];
+    const formValues = this.formValues$()?.budgetsFormArray ?? [];
     const combinedData = formValues.map(
       (formValue: BudgetFormValue, index: number) => ({
         ...staticBudgets[index],
         ...formValue,
-      })
+      }),
     );
     clientData.budgets = combinedData.filter((b: Budget) => b.selected);
     clientData.totalPrice = this.totalBudget();
-    this.budgetService.updateClientBudgets(clientData);
+    this.budgetService.addClientBudget(clientData);
 
     this.clientForm.reset();
     this.budgetsForm.reset();

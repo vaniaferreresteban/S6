@@ -1,15 +1,44 @@
 :host {
   box-sizing: border-box;
-  padding: 10vh 10%;
+  padding: 5vh 10%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
   width: 90%;
+  margin: 0 auto;
   height: 70vh;
+  > div {
+    margin-bottom: 1em;
+  }
 }
+
 form {
   width: 100%;
+}
+@media screen and (max-width: 900px) {
+  form.create-client {
+    display: flex;
+    flex-flow: column nowrap;
+    > div {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
+      margin: 0.5em 10%;
+      label {
+        flex: 0 0 30%;
+      }
+      input {
+        flex: 0 0 70%;
+        box-sizing: border-box;
+      }
+    }
+    button {
+      width: 150px;
+      align-self: flex-end;
+      margin-right: 10%;
+    }
+  }
 }
 article {
   display: flex;

@@ -1,9 +1,19 @@
-@if (budgetService.getClientBudgets().length>0) {
+@if (budgetService.clientBudgets$().length > 0) {
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Busca per nom de client..."
+  />
   <button (click)="orderByDate()">Data</button>
   <button (click)="orderByPrice()">Preu</button>
   <button (click)="orderByAlphabet()">Alfabeticament</button>
 }
-@for (clientBudget of selectedOrder; let i = $index; track i) {
+
+@for (
+  clientBudget of displayedBudgets();
+  let i = $index;
+  track clientBudget.name
+) {
   <article>
     <div>
       <h2>
@@ -27,6 +37,9 @@
     </div>
     <div>
       <strong> Preu Total: {{ clientBudget.totalPrice }} € </strong>
+      <button class="clickable" (click)="generateUrl(clientBudget)">
+        🔗
+      </button>
     </div>
   </article>
 }

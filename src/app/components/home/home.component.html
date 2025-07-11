@@ -39,17 +39,41 @@
 >
   <div>
     <label for="name">Nom: </label>
-    <input id="name" formControlName="name" type="text" />
+    <input id="name" aria-label="nom" formControlName="name" type="text" />
+    <div>
+      @if (
+        clientForm.get("name")?.hasError("required") &&
+        clientForm.get("name")?.touched
+      ) {
+        <small>El nom és obligatori.</small>
+      }
+    </div>
   </div>
 
   <div>
     <label for="telephone">Telèfon: </label>
-    <input id="telephone" formControlName="telephone" type="tel" />
+    <input id="telephone" aria-label="numero movil" formControlName="telephone" type="tel" />
+    <div>
+      @if (
+        clientForm.get("telephone")?.hasError("required") &&
+        clientForm.get("name")?.touched
+      ) {
+        <small>El telefon és obligatori.</small>
+      }
+    </div>
   </div>
 
   <div>
     <label for="email">Email: </label>
-    <input id="email" formControlName="email" type="email" />
+    <input id="email" aria-label="email" formControlName="email" type="email" />
+    <div>
+      @if (
+        clientForm.get("email")?.hasError("required") &&
+        clientForm.get("name")?.touched
+      ) {
+        <small>L'E-Mail és obligatori.</small>
+      }
+    </div>
   </div>
 
   <button type="submit" [disabled]="!clientForm.valid">
