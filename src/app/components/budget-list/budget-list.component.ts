@@ -24,7 +24,7 @@ export class BudgetListComponent {
     const encodedData = btoa(jsonString);
 
     const baseUrl = window.location.origin;
-    const shareableUrl = `${baseUrl}/?data=${encodedData}`;
+    const shareableUrl = `${baseUrl}/home?data=${encodedData}`;
 
     try {
       await navigator.clipboard.writeText(shareableUrl);
