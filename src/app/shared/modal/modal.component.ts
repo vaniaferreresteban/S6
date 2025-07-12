@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Input,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatDialog,
@@ -6,7 +11,7 @@ import {
   MatDialogClose,
   MatDialogContent,
   MatDialogTitle,
-  MAT_DIALOG_DATA
+  MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 
 import { BudgetOptions } from '../../interfaces/budgetOptions';
@@ -15,13 +20,12 @@ import { BudgetOptions } from '../../interfaces/budgetOptions';
  */
 @Component({
   selector: 'app-modal',
-  templateUrl: 'modal.Component.html',
+  templateUrl: './modal.Component.html',
   standalone: true,
   imports: [MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent {
-
   @Input() option!: BudgetOptions;
 
   readonly dialog = inject(MatDialog);
@@ -33,13 +37,18 @@ export class ModalComponent {
 
 @Component({
   selector: 'app-open-dialog',
-  template: `<h2 mat-dialog-title>{{option.name}}</h2>
-<mat-dialog-content>{{option.info}}</mat-dialog-content>
-<mat-dialog-actions>
-  <button matButton mat-dialog-close>Tancar</button>
-</mat-dialog-actions>
-`,
-  imports: [MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule],
+  template: `<h2 mat-dialog-title>{{ option.name }}</h2>
+    <mat-dialog-content>{{ option.info }}</mat-dialog-content>
+    <mat-dialog-actions>
+      <button matButton mat-dialog-close>Tancar</button>
+    </mat-dialog-actions> `,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
+    MatButtonModule,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OpenDialog {
