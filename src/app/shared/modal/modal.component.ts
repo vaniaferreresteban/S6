@@ -20,7 +20,7 @@ import { BudgetOptions } from '../../interfaces/budgetOptions';
  */
 @Component({
   selector: 'app-modal',
-  templateUrl: './modal.Component.html',
+  template: '<button matButton (click)="openDialog()">i</button>',
   standalone: true,
   imports: [MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
