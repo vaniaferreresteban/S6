@@ -14,7 +14,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 
-import { BudgetOptions } from '../../interfaces/budgetOptions';
+import { BudgetOptions } from '../../features/budgets/models/budgetOptions';
 /**
  * @title Dialog elements
  */
