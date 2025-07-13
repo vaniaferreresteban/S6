@@ -11,6 +11,7 @@ import {
 
 import { startWith } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -41,6 +42,7 @@ export class HomeComponent implements OnInit {
   private budgetService = inject(BudgetService);
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
+  private snackBar = inject(MatSnackBar);
 
   public budgetsForm: FormGroup = this.formBuilder.group({
     budgetsFormArray: this.formBuilder.array([]),
@@ -137,8 +139,13 @@ export class HomeComponent implements OnInit {
 
   public createClient() {
     if (this.clientForm.invalid || this.totalBudget() === 0) {
-      alert(
+     
+      this.snackBar.open(
         "Has d'omplir les dades de client i afegir un pressupost per a continuar.",
+        "D'acord",
+        {
+          duration: 3000,
+        },
       );
       return;
     }

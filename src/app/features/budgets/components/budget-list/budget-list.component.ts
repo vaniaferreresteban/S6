@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { KeyValuePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { BudgetService } from '../../../budgets/services/budget.service';
 import { Client } from '../../models/client';
@@ -14,6 +15,7 @@ import { Client } from '../../models/client';
 })
 export class BudgetListComponent {
   public budgetService = inject(BudgetService);
+  private snackBar = inject(MatSnackBar);
 
   public searchTerm = signal<string>('');
   public sortOrder = signal<'date' | 'price' | 'alphabet'>('date');
@@ -28,10 +30,22 @@ export class BudgetListComponent {
 
     try {
       await navigator.clipboard.writeText(shareableUrl);
-      alert('Enllaç copiat al porta-retalls! Ja el pots compartir.');
+      this.snackBar.open(
+        'Enllaç copiat al porta-retalls! Ja el pots compartir.',
+        "D'acord",
+        {
+          duration: 3000,
+        },
+      );
     } catch (err) {
       console.error("No s'ha pogut copiar l'enllaç: ", err);
-      alert("Error en copiar l'enllaç. Ves-hi:" + shareableUrl);
+      this.snackBar.open(
+        "Error en copiar l'enllaç. Ves-hi:" + shareableUrl,
+        "D'acord",
+        {
+          duration: 3000,
+        },
+      );
     }
   }
 
