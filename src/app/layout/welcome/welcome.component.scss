@@ -1,0 +1,20 @@
+:host {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
+}
+div {
+  margin: 10px 0;
+  background-position: 90%;
+  background-image: url("https://i.imgur.com/RSY5SyB.png");
+  background-size: cover;
+  width: 100%;
+  height: 20vh;
+  border-radius: 30px;
+  overflow: hidden;
+  color: white;
+  line-height: 20vh;
+  font-size: 4em;
+  font-weight: 600;
+  text-align: center;
+}

@@ -1,0 +1,38 @@
+:host {
+  width: 100%;
+  margin-top: 5vh;
+}
+article {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  background-color: lightcoral;
+  padding: 1em 2em;
+  margin: 1em 0;
+
+  border-radius: 30px;
+  .name {
+    flex: 1 1 70%;
+  }
+  .price,
+  .add {
+    flex: 0 0 15%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .panel {
+    flex: 1 0 100%;
+  }
+  .clickable {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    &:hover {
+      text-shadow: 1px 1px 3px #000000cc;
+    }
+  }
+}
