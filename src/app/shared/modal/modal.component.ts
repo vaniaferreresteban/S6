@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  input,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -26,7 +26,8 @@ import { BudgetOptions } from '../../features/budgets/models/budgetOptions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent {
-  @Input() option!: BudgetOptions;
+  //@Input() option!: BudgetOptions;
+  option = input<BudgetOptions | undefined>(); 
 
   readonly dialog = inject(MatDialog);
 

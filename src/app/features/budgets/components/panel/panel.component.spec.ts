@@ -9,9 +9,9 @@ import {
 } from '@angular/forms';
 
 import { PanelComponent } from './panel.component';
-import { ModalComponent } from '../../shared/modal/modal.component';
-import { BudgetOptions } from '../../interfaces/budgetOptions';
-import { NumInputComponent } from '../../shared/num-input/num-input.component';
+import { ModalComponent } from '../../../../shared/modal/modal.component';
+import { BudgetOptions } from '../../models/budgetOptions';
+import { NumInputComponent } from '../../../../shared/num-input/num-input.component';
 
 @Component({
   selector: 'app-num-input',
