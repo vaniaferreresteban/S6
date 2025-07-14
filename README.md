@@ -1,59 +1,122 @@
-# S6
+Sí, el README.md que t'he proporcionat a la resposta anterior segueix fidelment l'estructura i l'estil de la mostra que em vas passar. He adaptat cada secció (el títol, la taula de continguts, les característiques, la instal·lació, etc.) per reflectir el format del teu exemple.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.1.
+De vegades, depenent d'on ho visualitzis, el format pot no renderitzar-se correctament.
 
-## Development server
+Perquè no hi hagi cap dubte i ho puguis copiar i enganxar directament en un arxiu anomenat README.md, aquí el tens de nou, en format de text pla (raw Markdown):
+Markdown
 
-To start a local development server, run:
+# S6: Pressupostos amb Angular (ITAcademy)
+
+Aquest projecte és una aplicació web interactiva desenvolupada amb Angular per a la creació i gestió de pressupostos de serveis digitals. Permet als usuaris seleccionar serveis, personalitzar quantitats i obtenir un cost total en temps real, a més de poder guardar i compartir els resultats.
+
+## Taula de Continguts
+- [Sobre el Projecte](#sobre-el-projecte)
+- [Característiques](#característiques)
+- [Demostració Visual](#demostració-visual)
+- [Tecnologies Utilitzades](#tecnologies-utilitzades)
+- [Instal·lació](#instal·lació)
+- [Ús](#ús)
+- [Llicència](#llicència)
+- [Contacte](#contacte)
+
+## Sobre el Projecte
+
+L'aplicació "Pressupostos amb Angular" ha estat dissenyada per oferir una experiència d'usuari guiada i eficient per a la configuració de pressupostos. El seu objectiu principal és facilitar un càlcul transparent i dinàmic dels costos, permetent alhora una gestió senzilla dels pressupostos generats. La interfície és neta, intuïtiva i se centra a proporcionar a l'usuari un control total sobre les seves seleccions.
+
+## Característiques
+
+* **Càlcul Dinàmic:** El preu total del pressupost s'actualitza a l'instant amb cada canvi que fa l'usuari.
+* **Serveis Personalitzables:** Permet ajustar detalls específics com el nombre de pàgines o idiomes mitjançant un panell interactiu.
+* **Gestió de Pressupostos:**
+    * Capacitat per desar pressupostos assignant-los un nom de client.
+    * Llistat dels pressupostos guardats amb opcions d'ordenació (alfabètica, data).
+    * Cercador per filtrar pressupostos existents.
+* **Compartir via URL:** L'estat del pressupost actual es codifica en els paràmetres de la URL, facilitant la compartició de configuracions específiques.
+* **Basat en Components:** Estructura modular que facilita el manteniment i l'escalabilitat del codi.
+
+## Demostració Visual
+
+Aquí pots veure un exemple de les pantalles principals de l'aplicació.
+
+<img src="https://i.imgur.com/eCtw0YC.png" width="200">
+
+## Tecnologies Utilitzades
+
+Aquest projecte ha estat desenvolupat utilitzant les següents tecnologies:
+
+* **[Angular](https://angular.dev/)** - v20.0.5 
+* **[TypeScript](https://www.typescriptlang.org/)** - v5.8.2 
+* **[Node.js](https://nodejs.org/)** (Requerit per Angular CLI)
+* **HTML5**
+* **SCSS** (Sass)
+
+## Instal·lació
+
+Per configurar i executar aquest projecte localment, segueix els següents passos:
+
+### Prerequisits
+
+Assegura't de tenir instal·lat Node.js
+
+* **Node.js**: Descarrega'l i instal·la'l des de [nodejs.org](https://nodejs.org/). Es recomana una versió LTS.
+* **Angular CLI**: Instal·la el CLI d'Angular globalment si encara no el tens (la versió del projecte és 20.0.5):
+    ```bash
+    npm install -g @angular/cli
+    ```
+
+### Passos d'Instal·lació
+
+1.  **Clona el repositori:**
+    ```bash
+    git clone [https://github.com/vaniaferreresteban/S6-Pressupostos-Angular.git](https://github.com/vaniaferreresteban/S6-Pressupostos-Angular.git)
+    ```
+2.  **Navega al directori del projecte:**
+    ```bash
+    cd S6-Pressupostos-Angular
+    ```
+3.  **Instal·la les dependències de Node:**
+    ```bash
+    npm install
+    ```
+
+## Ús
+
+Una vegada que hagis instal·lat les dependències, pots executar l'aplicació en un servidor de desenvolupament local o construir-la per a producció.
+
+### Executar en Mode de Desenvolupament
+
+Per iniciar l'aplicació en mode de desenvolupament amb recàrrega en viu:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Obre el teu navegador i navega a http://localhost:4200/. L'aplicació es recarregarà automàticament si realitzes canvis als arxius font.
 
-## Code scaffolding
+## Construir per a Producció
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Per construir el projecte per a desplegament en un entorn de producció:
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
+```Bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Els artefactes de construcció s'emmagatzemaran al directori dist/.
 
-## Running unit tests
+##Executar Proves
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Per executar les proves unitàries:
 
-```bash
+```Bash
 ng test
 ```
+## Llicència
 
-## Running end-to-end tests
+This project is open-source and available under the MIT License.
 
-For end-to-end (e2e) testing, run:
+## Contacte
 
-```bash
-ng e2e
-```
+Per a qualsevol pregunta o comentari, pots contactar amb la mantenidora del projecte:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Vania Ferrer Esteban
+GitHub: vaniaferreresteban
