@@ -1,10 +1,3 @@
-Sí, el README.md que t'he proporcionat a la resposta anterior segueix fidelment l'estructura i l'estil de la mostra que em vas passar. He adaptat cada secció (el títol, la taula de continguts, les característiques, la instal·lació, etc.) per reflectir el format del teu exemple.
-
-De vegades, depenent d'on ho visualitzis, el format pot no renderitzar-se correctament.
-
-Perquè no hi hagi cap dubte i ho puguis copiar i enganxar directament en un arxiu anomenat README.md, aquí el tens de nou, en format de text pla (raw Markdown):
-Markdown
-
 # S6: Pressupostos amb Angular (ITAcademy)
 
 Aquest projecte és una aplicació web interactiva desenvolupada amb Angular per a la creació i gestió de pressupostos de serveis digitals. Permet als usuaris seleccionar serveis, personalitzar quantitats i obtenir un cost total en temps real, a més de poder guardar i compartir els resultats.
@@ -14,7 +7,7 @@ Aquest projecte és una aplicació web interactiva desenvolupada amb Angular per
 - [Característiques](#característiques)
 - [Demostració Visual](#demostració-visual)
 - [Tecnologies Utilitzades](#tecnologies-utilitzades)
-- [Instal·lació](#instal·lació)
+- [Instal·lació](#installació)
 - [Ús](#ús)
 - [Llicència](#llicència)
 - [Contacte](#contacte)
@@ -38,7 +31,8 @@ L'aplicació "Pressupostos amb Angular" ha estat dissenyada per oferir una exper
 
 Aquí pots veure un exemple de les pantalles principals de l'aplicació.
 
-<img src="https://i.imgur.com/eCtw0YC.png" width="200">
+<img src="https://i.imgur.com/eCtw0YC.png" width="800">
+<img src="https://i.imgur.com/gC6aWGB.png" width="800">
 
 ## Tecnologies Utilitzades
 
@@ -93,7 +87,7 @@ ng serve
 
 Obre el teu navegador i navega a http://localhost:4200/. L'aplicació es recarregarà automàticament si realitzes canvis als arxius font.
 
-## Construir per a Producció
+### Construir per a Producció
 
 Per construir el projecte per a desplegament en un entorn de producció:
 
